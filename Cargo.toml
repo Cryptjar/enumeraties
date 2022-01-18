@@ -11,6 +11,12 @@ keywords = ["enum", "macro", "static", "const", "lazy"]
 categories = ["no-std", "rust-patterns"]
 
 
+[features]
+default = []
+# Enables benchmarks, but requires nightly Rust, only for development use
+bench = []
+
+
 [dependencies]
 lazy_static = "1.4"
 

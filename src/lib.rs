@@ -1,4 +1,5 @@
 #![forbid(unsafe_code)]
+#![cfg_attr(feature = "bench", feature(test))]
 
 
 // *The* trait
@@ -230,6 +231,8 @@ macro_rules! internal_props_impl_macro {
 		&*FOO
 	}};
 }
+
+mod benchs;
 
 
 #[cfg(test)]

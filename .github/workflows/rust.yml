@@ -21,6 +21,12 @@ jobs:
         matrix:
           rust: [stable, nightly]
           features: ["--", "--all-features"]
+          exclude:
+            # excludes --all-features on stable, because some features require
+            # nightly Rust
+            - rust: stable
+              features: "--all-features"
+
 
     # The actual build steps
     steps:
