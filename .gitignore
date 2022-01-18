@@ -1,0 +1,7 @@
+# Normal Cargo stuff
+/target
+Cargo.lock
+
+# VS code stuff
+/rls*.log
+/.vscode
