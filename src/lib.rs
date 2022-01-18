@@ -32,7 +32,7 @@ props! {
 
 /// Adds a property onto an enum
 ///
-/// Basic syntax with deref:
+/// Basic syntax using [Deref](core::ops::Deref):
 ///
 /// ```text
 /// impl Deref for <ENUM> as (lazy|const) <PROPERTY> {
@@ -44,7 +44,7 @@ props! {
 /// }
 /// ```
 ///
-/// Basic syntax without deref:
+/// Basic syntax for inherent method access:
 ///
 /// ```text
 /// impl <ENUM> : <VIS> fn <FN_NAME> as (lazy|const) <PROPERTY> {
@@ -55,10 +55,22 @@ props! {
 ///     ...
 /// }
 /// ```
+///
+/// Basic syntax for only the trait impl:
+///
+/// ```text
+/// impl EnumProp for <ENUM> as (lazy|const) <PROPERTY> {
+///     <VARIANT> => {
+///         <FIELD> : <VALUE>,
+///         ...
+///     },
+///     ...
+/// }
+/// ```
 #[macro_export]
 macro_rules! props {
 	(
-		// A lazy/const impl
+		// A lazy/const impl that will be promoted to `Deref` (also impls `EnumProp`)
 		impl Deref for $enum_name:ty as $modifier:ident $prop_name:path { $($matching:tt)* }
 	) => {
 		// Add the EnumProp impl
@@ -78,7 +90,7 @@ macro_rules! props {
 		}
 	};
 	(
-		// The lazy/const impl that will be promoted to `Deref` (also impls `EnumProp`)
+		// The lazy/const impl via inherent method (also impls `EnumProp`)
 		impl $enum_name:ty : $fn_vis:vis fn $fn_name:ident as $modifier:ident $prop_name:path { $($matching:tt)* }
 	) => {
 		// Add the EnumProp impl
@@ -93,6 +105,18 @@ macro_rules! props {
 		impl $enum_name {
 			$fn_vis fn $fn_name(&self) -> &'static $prop_name {
 				$crate::EnumProp::<$prop_name>::property(self)
+			}
+		}
+	};
+	(
+		// The lazy/const impl `EnumProp` only
+		impl EnumProp for $enum_name:ty as $modifier:ident $prop_name:path { $($matching:tt)* }
+	) => {
+		// Add the EnumProp impl
+		$crate::internal_props_impl_macro!{
+			@EnumProp
+			mod($modifier) ($prop_name) for $enum_name {
+				$($matching)*
 			}
 		}
 	};
