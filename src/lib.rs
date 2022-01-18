@@ -13,7 +13,7 @@ pub use core::ops::Deref;
 
 // Could still be feature gated
 #[doc(hidden)]
-pub use lazy_static; // 1.4.0
+pub use static_init;
 
 /*
 props! {
@@ -215,18 +215,17 @@ macro_rules! internal_props_impl_macro {
 			),* $(,)?
 		}
 	) => {{
-		// A static reference via lazy_static.
+		// A static reference via static_init.
 
 		// `FOO` is rather arbitrary here, maybe different name would be better
-		$crate::lazy_static::lazy_static!{
-			static ref FOO: $prop_name = {
-				$prop_name {
-					$(
-						$field : $value ,
-					)*
-				}
-			};
-		}
+		#[$crate::static_init::dynamic]
+		static FOO: $prop_name = {
+			$prop_name {
+				$(
+					$field : $value ,
+				)*
+			}
+		};
 
 		&*FOO
 	}};
