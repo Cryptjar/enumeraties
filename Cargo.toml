@@ -13,3 +13,8 @@ categories = ["no-std", "rust-patterns"]
 
 [dependencies]
 lazy_static = "1.4"
+
+
+[dev-dependencies]
+enum_properties = "0.3.0"
+enum-map = "0.6"

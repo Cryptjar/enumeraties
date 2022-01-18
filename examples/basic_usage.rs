@@ -1,9 +1,11 @@
+// This file shows a simple usage of this crate.
+
 #![allow(dead_code)] // this is just an example
 
 use enumeraties::props;
 
 // An enum that will gets some props
-enum Shapes {
+enum Shape {
 	Triangle,
 	Square,
 	Hexagon,
@@ -18,7 +20,7 @@ struct ShapeDef {
 
 // Defining the properties on the enum
 props! {
-	impl Deref for Shapes as const ShapeDef {
+	impl Deref for Shape as const ShapeDef {
 		Self::Triangle => {
 			name: "Triangle",
 			vertices: 3,
@@ -41,8 +43,8 @@ props! {
 pub fn main() {
 	println!(
 		"A {} has {} vertices and an internal angle of {:.3} radian.",
-		Shapes::Hexagon.name,           // gives "Hexagon"
-		Shapes::Hexagon.vertices,       // gives 6
-		Shapes::Hexagon.internal_angle  // gives π/6
+		Shape::Hexagon.name,           // gives "Hexagon"
+		Shape::Hexagon.vertices,       // gives 6
+		Shape::Hexagon.internal_angle  // gives π/6
 	)
 }

@@ -1,3 +1,6 @@
+#![forbid(unsafe_code)]
+
+
 // *The* trait
 pub trait EnumProp<Prop> {
 	fn property(&self) -> &'static Prop;
