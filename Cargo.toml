@@ -1,7 +1,15 @@
 [package]
 name = "enumeraties"
+description = "Static properties on enum variants"
 version = "0.0.0"
+authors = ["Cryptjar <cryptjar@junk.studio>"]
+license = "Apache-2.0"
 edition = "2021"
+
+repository = "https://github.com/cryptjar/enumeraties"
+keywords = ["enum", "macro", "static", "const", "lazy"]
+categories = ["no-std", "rust-patterns"]
+
 
 [dependencies]
 lazy_static = "1.4"
