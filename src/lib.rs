@@ -1,9 +1,11 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(feature = "bench", feature(test))]
-/// This crate provides a macro to add static, const, or lazy-initialized
-/// properties to enum variants.
-///
-///
+//! This crate provides a macro to add static, const, or lazy-initialized
+//! properties to enum variants.
+//!
+//!
+
+
 
 /// The trait that is implemented through [`props`] macro.
 ///
@@ -13,7 +15,6 @@
 /// # Example
 ///
 /// ```
-///
 /// use enumeraties::props;
 /// use enumeraties::EnumProp;
 ///
@@ -79,25 +80,50 @@ pub use core::ops::Deref;
 #[doc(hidden)]
 pub use lazy_static; // 1.4.0
 
-/*
-props! {
-	impl Deref for Foo as const PropsConst {
-		...
-	}
-}
-
-props! {
-	impl Foo pub fn inherent as const PropsConst {
-		...
-	}
-}
-*/
-
 // The public front-end macro
 
 /// Adds a property onto an enum
 ///
-/// Basic syntax using [Deref](core::ops::Deref):
+/// # Const, Static, Lazy
+///
+/// This macro allows implement properties in three different ways:
+/// * as a constant
+/// * as a static
+/// * as a lazily initialized static
+///
+/// `const` and `static` are very similar, but have subtle difference:
+/// the property type put into a `static` must implement `Send`. However,
+/// with a `static` it is guaranteed that for each variant there is exactly one
+/// unique property value and thus a unique reference address.
+/// With `const` the compiler is allowed to merge properties (if they are equal)
+/// or to inline and instantiated the same logical property multiple times,
+/// i.e. the same logical property might be accessed via different reference
+/// addresses.
+/// In the very most cases, the actual reference address should not be of any
+/// concern and thus it is recommended to use `const` over `static`.
+/// A part from addresses, one important case where it make a difference, is
+/// when the property contains interior mutability. Then changes will only be
+/// preserved globally if `static` is used.
+///
+/// `lazy`, on the other hand, is quite different from the `const` and `static`.
+/// While `const` and `static` require constant initialized values computed at
+/// compile-time, `lazy` allows to evaluate the value lazily at runtime,
+/// instead. However, this feature incurs some overhead at each access, because
+/// it must be checked that the value was indeed already initialized.
+/// And of course, the first access to a `lazy` value, will incur the additional
+/// delay to initialize the value.
+///
+///
+/// # Syntax
+///
+/// This macro comes with essentially three different syntaxes: to implement
+/// `Deref` (for the primary property), add an inherent access method
+/// (for secondary properties), or just implementing `EnumProp` onto it (e.g.,
+/// if only used by generic code).
+///
+/// ## Implementing [Deref](core::ops::Deref)
+///
+/// Syntax:
 ///
 /// ```text
 /// impl Deref for <ENUM> as (lazy|const) <PROPERTY> {
@@ -109,7 +135,27 @@ props! {
 /// }
 /// ```
 ///
-/// Basic syntax for inherent method access:
+/// Example:
+///
+/// ```
+/// # use enumeraties::props;
+/// struct Prop { name: &'static str }
+/// enum Foo {A}
+/// props! {
+///     impl Deref for Foo as const Prop {
+///         Self::A => {
+///             name: "Foo",
+///         }
+///     }
+/// }
+/// // Direct access due to deref
+/// assert_eq!(Foo::A.name, "Foo");
+/// ```
+///
+///
+/// ## Implementing an inherent method
+///
+/// Syntax:
 ///
 /// ```text
 /// impl <ENUM> : <VIS> fn <FN_NAME> as (lazy|const) <PROPERTY> {
@@ -121,7 +167,27 @@ props! {
 /// }
 /// ```
 ///
-/// Basic syntax for only the trait impl:
+/// Example:
+///
+/// ```
+/// # use enumeraties::props;
+/// struct Prop { name: &'static str }
+/// enum Foo {A}
+/// props! {
+///     // Of course, an arbitrary function names can be used instead of `getter`
+///     impl Foo : fn getter as const Prop {
+///         Self::A => {
+///             name: "Foo",
+///         }
+///     }
+/// }
+/// // Access via inherent method
+/// assert_eq!(Foo::A.getter().name, "Foo");
+/// ```
+///
+/// ## Implementing only `EnumProp`
+///
+/// Syntax:
 ///
 /// ```text
 /// impl EnumProp for <ENUM> as (lazy|const) <PROPERTY> {
@@ -132,6 +198,25 @@ props! {
 ///     ...
 /// }
 /// ```
+///
+/// Example:
+///
+/// ```
+/// # use enumeraties::props;
+/// struct Prop { name: &'static str }
+/// enum Foo {A}
+/// props! {
+///     impl EnumProp for Foo as const Prop {
+///         Self::A => {
+///             name: "Foo",
+///         }
+///     }
+/// }
+/// // Access via universal function call
+/// use enumeraties::EnumProp;
+/// assert_eq!(EnumProp::<Prop>::property(&Foo::A).name, "Foo");
+/// ```
+///
 #[macro_export]
 macro_rules! props {
 	(
