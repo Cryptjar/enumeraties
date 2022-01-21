@@ -131,17 +131,11 @@ macro_rules! internal_props_impl_macro {
 	(
 		// The enum prop impl, entry rule
 		@EnumProp
-
-		// Just some fancy header, we could add `Deref` somewhere to make clear
-		// that that's what we actually implement
 		mod($modifier:ident) ($prop_name:path) for $enum_name:ty {
 			$(
-				// True match branches, could be simplified to `ident`, but then
-				// one can on longer identify e.g. `Beta(42)` (maybe one shouldn't)
-				$branch:pat => {
-					$(
-						$struct_fields:tt
-					)*
+				// Only matches simple `ident`
+				$branch:ident => {
+					$( $struct_fields:tt )*
 				} $(,)?
 			)*
 		}
@@ -150,7 +144,7 @@ macro_rules! internal_props_impl_macro {
 			fn property(&self) -> &'static $prop_name {
 				match self {
 					$(
-						$branch => {
+						Self :: $branch => {
 							$crate::internal_props_impl_macro!(
 								@Branch mod($modifier) $prop_name {
 									$( $struct_fields )*

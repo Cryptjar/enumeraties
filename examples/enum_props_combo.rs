@@ -50,7 +50,7 @@ struct LazyProps {
 // accessible via the inherent method `props`.
 props! {
 	impl Shape : fn props as lazy LazyProps {
-		Self::Triangle => {
+		Triangle => {
 			// Laziness allows to run arbitrary init code
 			description: [1,2,3].iter().map(ToString::to_string).collect(),
 			area_ration_with: enum_map! {
@@ -60,7 +60,7 @@ props! {
 				Shape::Hexagon => 1.0 / 6.0,
 			},
 		}
-		Self::Square => {
+		Square => {
 			description: String::new(),
 			area_ration_with: enum_map! {
 				Shape::Triangle => 1.0,
@@ -68,7 +68,7 @@ props! {
 				Shape::Hexagon => 2_f32 / (3_f32 * 3_f32.sqrt()),
 			},
 		}
-		Self::Hexagon => {
+		Hexagon => {
 			description: {
 				let mut buf = String::new();
 				buf .push_str("stuff");

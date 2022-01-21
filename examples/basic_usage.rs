@@ -21,17 +21,17 @@ struct ShapeDef {
 // Defining the properties on the enum
 props! {
 	impl Deref for Shape as const ShapeDef {
-		Self::Triangle => {
+		Triangle => {
 			name: "Triangle",
 			vertices: 3,
 			internal_angle: core::f32::consts::PI / 3.,
 		}
-		Self::Square => {
+		Square => {
 			name: "Square",
 			vertices: 4,
 			internal_angle: core::f32::consts::PI / 4.,
 		}
-		Self::Hexagon => {
+		Hexagon => {
 			name: "Hexagon",
 			vertices: 6,
 			internal_angle: core::f32::consts::PI / 6.,

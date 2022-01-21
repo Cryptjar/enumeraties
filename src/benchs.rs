@@ -39,7 +39,7 @@ enum Singleton {
 
 props! {
 	impl EnumProp for Singleton as const IntPropConst {
-		Singleton::Foo => {
+		Foo => {
 			int: 42
 		}
 	}
@@ -52,7 +52,7 @@ fn singelton_1000_const_access(b: &mut Bencher) {
 
 props! {
 	impl EnumProp for Singleton as lazy IntPropLazy {
-		Singleton::Foo => {
+		Foo => {
 			int: 42
 		}
 	}
@@ -76,16 +76,16 @@ pub enum Quad {
 
 props! {
 	impl EnumProp for Quad as const IntPropConst {
-		Quad::A => {
+		A => {
 			int: 3
 		}
-		Quad::B => {
+		B => {
 			int: 5
 		}
-		Quad::C => {
+		C => {
 			int: 7
 		}
-		Quad::D => {
+		D => {
 			int: 11
 		}
 	}
@@ -97,16 +97,16 @@ pub fn quad_1000_const_access(b: &mut Bencher) {
 
 props! {
 	impl EnumProp for Quad as lazy IntPropLazy {
-		Quad::A => {
+		A => {
 			int: 3
 		}
-		Quad::B => {
+		B => {
 			int: 5
 		}
-		Quad::C => {
+		C => {
 			int: 7
 		}
-		Quad::D => {
+		D => {
 			int: 11
 		}
 	}
