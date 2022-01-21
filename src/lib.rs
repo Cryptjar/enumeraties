@@ -280,9 +280,6 @@ macro_rules! internal_props_impl_macro {
 	(
 		// The enum prop impl, entry rule
 		@EnumProp
-
-		// Just some fancy header, we could add `Deref` somewhere to make clear
-		// that that's what we actually implement
 		mod($modifier:ident) ($prop_name:path) for $enum_name:ty {
 			$(
 				// True match branches, could be simplified to `ident`, but then
@@ -297,6 +294,7 @@ macro_rules! internal_props_impl_macro {
 	) => {
 		impl $crate::EnumProp<$prop_name> for $enum_name {
 			fn property(&self) -> &'static $prop_name {
+				#[deny(unreachable_patterns)] // Remember the `Self` prefix
 				match self {
 					$(
 						$branch => {
@@ -315,30 +313,15 @@ macro_rules! internal_props_impl_macro {
 	(
 		// A single *const* prop value
 		@Branch
-
-		// Just some fancy header, we could add `Deref` somewhere to make clear
-		// that that's what we actually implement
 		mod(const) $prop_name:path {
 			$(
 				$field:ident : $value:expr
 			),* $(,)?
 		}
 	) => {{
-		// A static reference given, that all `$value`s are const-init
-		// Notice the difference between `static` and `const` here:
-		// Both need const-init data, but only `static` requires `Send`, i.e.
-		// `const` has less requirements, both work here.
-		//
-		// However, with `const` it is possible that two invocations of the
-		// surrounding function return different references (i.e. different
-		// addresses) because const gets inlined.
-		//
-		// If this subtle difference is important, it is conceivable to present
-		// both a `const` and a `static` variant.
-		//
-		// So, it just should be pointed out somewhere (in the docs).
+		// A const reference, given that all `$value`s are const-init
 
-		// Notice, having the explicit constant/static gives clearer error messages.
+		// Notice, having the explicit constant gives clearer error messages.
 
 		// `BAR` is rather arbitrary here, maybe different name would be better
 		const BAR : $prop_name = {
@@ -353,11 +336,31 @@ macro_rules! internal_props_impl_macro {
 	}};
 
 	(
+		// A single *static* prop value
+		@Branch
+		mod(static) $prop_name:path {
+			$(
+				$field:ident : $value:expr
+			),* $(,)?
+		}
+	) => {{
+		// A static reference given, that all `$value`s are const-init
+
+		// `BAZ` is rather arbitrary here, maybe different name would be better
+		static BAZ : $prop_name = {
+			$prop_name {
+				$(
+					$field : $value ,
+				)*
+			}
+		};
+
+		& BAZ
+	}};
+
+	(
 		// A single *const* prop value
 		@Branch
-
-		// Just some fancy header, we could add `Deref` somewhere to make clear
-		// that that's what we actually implement
 		mod(lazy) $prop_name:path {
 			$(
 				$field:ident : $value:expr
@@ -381,7 +384,10 @@ macro_rules! internal_props_impl_macro {
 	}};
 }
 
+// Some testing modules
+
 mod benchs;
+mod test_static;
 
 
 #[cfg(test)]
