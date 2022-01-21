@@ -1,8 +1,72 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(feature = "bench", feature(test))]
+/// This crate provides a macro to add static, const, or lazy-initialized
+/// properties to enum variants.
+///
+///
 
-
-// *The* trait
+/// The trait that is implemented through [`props`] macro.
+///
+/// This trait allows to write generic code that uses arbitrary enums that
+/// happen to have specific properties defined on them.
+///
+/// # Example
+///
+/// ```
+///
+/// use enumeraties::props;
+/// use enumeraties::EnumProp;
+///
+/// struct Prop {
+///     name: &'static str,
+/// }
+///
+/// // A generic function that works for any enum that has the `Prop` property
+/// fn to_name<E>(e: E) -> &'static str
+/// where
+///     E: EnumProp<Prop>,
+/// {
+///     // The `Prop` struct can be accessed via the `property` method
+///     e.property().name
+/// }
+///
+/// // One enum that will get the props
+/// enum Foo {
+///     A,
+///     B,
+/// }
+/// props! {
+///     impl Deref for Foo as const Prop {
+///         Self::A => {
+///             name: "Foo",
+///         }
+///         Self::B => {
+///             name: "Foobar",
+///         }
+///     }
+/// }
+///
+/// // Another enum that will get the same props
+/// enum Bar {
+///     C,
+///     D,
+/// }
+/// props! {
+///     impl Deref for Bar as const Prop {
+///         Self::C => {
+///             name: "Bar",
+///         }
+///         Self::D => {
+///             name: "Barfoo",
+///         }
+///     }
+/// }
+///
+/// // Both enum can be used to call that function
+/// assert_eq!(to_name(Foo::A), "Foo");
+/// assert_eq!(to_name(Bar::C), "Bar");
+/// ```
+///
 pub trait EnumProp<Prop> {
 	fn property(&self) -> &'static Prop;
 }
