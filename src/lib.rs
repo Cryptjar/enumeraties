@@ -3,7 +3,31 @@
 //! This crate provides a macro to add static, const, or lazy-initialized
 //! properties to enum variants.
 //!
+//! See the [`props`](crate::props) macro for more details.
 //!
+//! # Example
+//!
+//! ```
+//! use enumeraties::props;
+//!
+//! // A property struct
+//! struct Prop { name: &'static str }
+//!
+//! // An enum
+//! enum Foo {A}
+//!
+//! // Defining `Prop` on `Foo` via Deref
+//! props! {
+//!     impl Deref for Foo as const Prop {
+//!         Self::A => {
+//!             name: "Foo",
+//!         }
+//!     }
+//! }
+//!
+//! // Accessing the property on `Foo`
+//! assert_eq!(Foo::A.name, "Foo");
+//! ```
 
 
 
@@ -87,9 +111,9 @@ pub use lazy_static; // 1.4.0
 /// # Const, Static, Lazy
 ///
 /// This macro allows implement properties in three different ways:
-/// * as a constant
-/// * as a static
-/// * as a lazily initialized static
+/// * as `const`, a constant
+/// * as `static`, a global variable
+/// * as `lazy`, a lazily initialized static
 ///
 /// `const` and `static` are very similar, but have subtle difference:
 /// the property type put into a `static` must implement `Send`. However,
@@ -101,9 +125,10 @@ pub use lazy_static; // 1.4.0
 /// addresses.
 /// In the very most cases, the actual reference address should not be of any
 /// concern and thus it is recommended to use `const` over `static`.
-/// A part from addresses, one important case where it make a difference, is
-/// when the property contains interior mutability. Then changes will only be
-/// preserved globally if `static` is used.
+///
+/// One notable use-case for `static` is when the property contains interior
+/// mutability.
+/// In these cases, `const` shouldn't even compile.
 ///
 /// `lazy`, on the other hand, is quite different from the `const` and `static`.
 /// While `const` and `static` require constant initialized values computed at
@@ -126,7 +151,7 @@ pub use lazy_static; // 1.4.0
 /// Syntax:
 ///
 /// ```text
-/// impl Deref for <ENUM> as (lazy|const) <PROPERTY> {
+/// impl Deref for <ENUM> as (const|static|lazy) <PROPERTY> {
 ///     <VARIANT> => {
 ///         <FIELD> : <VALUE>,
 ///         ...
@@ -158,7 +183,7 @@ pub use lazy_static; // 1.4.0
 /// Syntax:
 ///
 /// ```text
-/// impl <ENUM> : <VIS> fn <FN_NAME> as (lazy|const) <PROPERTY> {
+/// impl <ENUM> : <VIS> fn <FN_NAME> as (const|static|lazy) <PROPERTY> {
 ///     <VARIANT> => {
 ///         <FIELD> : <VALUE>,
 ///         ...
@@ -190,7 +215,7 @@ pub use lazy_static; // 1.4.0
 /// Syntax:
 ///
 /// ```text
-/// impl EnumProp for <ENUM> as (lazy|const) <PROPERTY> {
+/// impl EnumProp for <ENUM> as (const|static|lazy) <PROPERTY> {
 ///     <VARIANT> => {
 ///         <FIELD> : <VALUE>,
 ///         ...
