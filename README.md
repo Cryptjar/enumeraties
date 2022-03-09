@@ -3,6 +3,9 @@ Enumeraties
 
 > Enumeration types with Properties
 
+[![Crates.io](https://img.shields.io/crates/v/enumeraties.svg)](https://crates.io/crates/enumeraties)
+[![API](https://docs.rs/enumeraties/badge.svg)](https://docs.rs/enumeraties)
+
 <!-- cargo-sync-readme start -->
 
 This crate provides a macro to add static, const, or lazy-initialized
@@ -46,3 +49,11 @@ assert_eq!(Foo::A.name, "Foo");
 ```
 
 <!-- cargo-sync-readme end -->
+
+# License
+
+Licensed under Apache License, Version 2.0 ([LICENSE](LICENSE) or https://www.apache.org/licenses/LICENSE-2.0).
+
+## Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this project by you, as defined in the Apache-2.0 license, shall be licensed as above, without any additional terms or conditions.
