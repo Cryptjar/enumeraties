@@ -20,7 +20,7 @@ additional features set comes with a syntax that is a bit more verbose,
 hence, if you just need a single const-initialized property, you might find
 `enum_properties` more concise. Nevertheless, you can also combine this
 crate with `enum_properties` using the best of both as shown in the
-[enum_props_combo](examples/enum_props_combo.rs) example.
+[enum_props_combo example](https://github.com/Cryptjar/enumeraties/blob/master/examples/enum_props_combo.rs).
 
 See the [`props`](https://docs.rs/enumeraties/latest/enumeraties/macro.props.html) macro for more details.
 
